@@ -92,47 +92,48 @@ void main() async {
           break;
 
         //---------------------------- resarch expense ------------------------------
-        Future<void> searchByItem(int userId) async {
-  stdout.write("Enter keyword (item): ");
-  final keyword = stdin.readLineSync()?.trim();
+        case '3':
+          stdout.write("Enter item : ");
+          final keyword = stdin.readLineSync()?.trim();
 
-  if (keyword == null || keyword.isEmpty) {
-    print("Please enter a keyword.");
-    return;
-  }
+          if (keyword == null || keyword.isEmpty) {
+            print("Please enter a keyword.");
+            break;
+          }
 
-  // เรียก GET /expenses/search/:user_id?item=keyword
-  final uri = Uri.http(
-    'localhost:3000',
-    '/expenses/search/$userId',
-    {'item': keyword},
-  );
+          // เรียก GET /expenses/search/:user_id?item=keyword
+          final uri = Uri.http(
+            'localhost:3000',
+            '/expenses/search/$userId',
+            {'item': keyword},
+          );
 
-  final resp = await http.get(uri);
+          final resp = await http.get(uri);
 
-  if (resp.statusCode != 200) {
-    print('Error ${resp.statusCode}: ${resp.body}');
-    return;
-  }
+          if (resp.statusCode != 200) {
+            print('Error ${resp.statusCode}: ${resp.body}');
+            break;
+          }
 
-  final List result = jsonDecode(resp.body);
+          final List result = jsonDecode(resp.body);
 
-  if (result.isEmpty) {
-    print('— No item contains "$keyword" —');
-    return;
-  }
+          if (result.isEmpty) {
+            print('— No item contains "$keyword" —');
+            break;
+          }
 
-  int total = 0;
-  int order = 1;
-  print("-------------- SEARCH: \"$keyword\" --------------");
-  for (final exp in result) {
-    final paid = (exp['paid'] as num).toInt();
-    total += paid;
-    print("$order. ${exp['item']} : ${paid}฿ @ ${exp['date']} (id=${exp['id']})");
-    order++;
-  }
-  print("Total (matched) = $total฿");
-}
+          int total = 0;
+          int order = 1;
+          print('-------------- SEARCH: "$keyword" --------------');
+          for (final exp in result) {
+            final paid = (exp['paid'] as num).toInt();
+            total += paid;
+            print("$order. ${exp['item']} : ${paid}฿ : ${exp['date']} (id=${exp['id']})");
+            order++;
+          }
+          print("Total  = $total฿");
+          break;
+
 
 
 
