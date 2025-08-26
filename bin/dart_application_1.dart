@@ -97,10 +97,35 @@ void main() async {
 
 
         //--------------------------- Add new expense -------------------------------
-        // เขียนตรงนี้  //
-        1
+        case '4':
+          stdout.write("Item: ");
+          String? item = stdin.readLineSync()?.trim();
 
+          stdout.write("Paid: ");
+          String? paidInput = stdin.readLineSync()?.trim();
+          int? paid = int.tryParse(paidInput ?? '');
 
+          if (item == null || item.isEmpty || paid == null) {
+            print("Invalid input. Please try again.");
+            break;
+          }
+
+          final addUrl = Uri.parse('http://localhost:3000/expenses');
+          final addBody = {
+            "user_id": userId.toString(),
+            "item": item,
+            "paid": paid.toString(),
+          };
+
+          final addResponse = await http.post(addUrl, body: addBody);
+
+          if (addResponse.statusCode == 201) {
+            print("Expense added successfully.");
+          } else {
+            print('Error ${addResponse.statusCode}: ${addResponse.body}');
+          }
+          break;
+        
 
 
         //-------------------------- Delete an expense -----------------------------
