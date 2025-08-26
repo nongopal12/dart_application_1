@@ -169,11 +169,38 @@ void main() async {
         
 
 
-        //-------------------------- Delete an expense -----------------------------
-        // เขียนตรงนี้  //
+               //-------------------------- Delete an expense -----------------------------
+        case '5':
+          try {
+            stdout.write("Enter expense ID to delete: ");
+            final idInput = stdin.readLineSync()?.trim();
 
+            if (idInput == null || idInput.isEmpty) {
+              print("❌ Invalid input! Expense ID is required.");
+              break;
+            }
 
+            // ตรวจสอบว่าเป็นตัวเลข
+            final expenseId = int.tryParse(idInput);
+            if (expenseId == null) {
+              print("❌ Expense ID must be a number.");
+              break;
+            }
 
+            final deleteUrl = Uri.parse("http://localhost:3000/expenses/$expenseId");
+            final deleteResponse = await http.delete(deleteUrl);
+
+            if (deleteResponse.statusCode == 200) {
+              print("✅ Expense deleted successfully!");
+            } else if (deleteResponse.statusCode == 404) {
+              print("❌ Expense not found!");
+            } else {
+              print("⚠️ Error ${deleteResponse.statusCode}: ${deleteResponse.body}");
+            }
+          } catch (e) {
+            print("🚨 An error occurred while deleting: $e");
+          }
+          break;
 
         case '6':
           print("------ BYE ------");
