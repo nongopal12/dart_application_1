@@ -92,7 +92,48 @@ void main() async {
           break;
 
         //---------------------------- resarch expense ------------------------------
-        // เขียนตรงนี้  //
+        Future<void> searchByItem(int userId) async {
+  stdout.write("Enter keyword (item): ");
+  final keyword = stdin.readLineSync()?.trim();
+
+  if (keyword == null || keyword.isEmpty) {
+    print("Please enter a keyword.");
+    return;
+  }
+
+  // เรียก GET /expenses/search/:user_id?item=keyword
+  final uri = Uri.http(
+    'localhost:3000',
+    '/expenses/search/$userId',
+    {'item': keyword},
+  );
+
+  final resp = await http.get(uri);
+
+  if (resp.statusCode != 200) {
+    print('Error ${resp.statusCode}: ${resp.body}');
+    return;
+  }
+
+  final List result = jsonDecode(resp.body);
+
+  if (result.isEmpty) {
+    print('— No item contains "$keyword" —');
+    return;
+  }
+
+  int total = 0;
+  int order = 1;
+  print("-------------- SEARCH: \"$keyword\" --------------");
+  for (final exp in result) {
+    final paid = (exp['paid'] as num).toInt();
+    total += paid;
+    print("$order. ${exp['item']} : ${paid}฿ @ ${exp['date']} (id=${exp['id']})");
+    order++;
+  }
+  print("Total (matched) = $total฿");
+}
+
 
 
 
